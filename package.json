@@ -1,6 +1,12 @@
 {
   "dependencies": {
     "@types/commander": "^2.12.5",
-    "chalk": "^5.6.2"
+    "@types/node": "^25.9.2",
+    "chalk": "^5.6.2",
+    "dotenv": "^17.4.2",
+    "fs": "^0.0.1-security"
+  },
+  "scripts": {
+    "castro": "bun cli.ts"
   }
 }
