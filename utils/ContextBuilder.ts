@@ -1,8 +1,5 @@
-import fs from "node:fs";
-
 import { Message, Task } from "../types/types";
 import { rootDir } from "../cli";
-import tools from "../tools/tools";
 
 export class ContextBuilder {
   async build(task: Task): Promise<Message[]> {
@@ -15,8 +12,8 @@ export class ContextBuilder {
     });
 
     if (task.type === "explain") {
-      const filePath = `${rootDir}/${task.target}`;
-      const fileData = tools.readfileTool(filePath);
+      // const fileData = tools.readfileTool(task.target);
+      const fileData = "Fake data explain";
       messages.push({
         role: "user",
         content: `
@@ -29,14 +26,14 @@ export class ContextBuilder {
         `,
       });
     } else if (task.type === "bug") {
-      const filePath = `${rootDir}/${task.target}`;
-      const fileData = tools.readfileTool(filePath);
+      // const fileData = tools.readfileTool(task.target);
+      const fileData = "Fake data bug";
       messages.push({
         role: "user",
         content: `
             Read the following file and find the bug:
 
-            Path: ${filePath}
+            Path: ${task.target}
 
             File Contents:
             ${fileData}
