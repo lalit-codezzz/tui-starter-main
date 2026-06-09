@@ -6,7 +6,7 @@
 
 // const task: Task = {
 //   type: "explain",
-//   target: "/tsconfig.json",
+//   target: "/auth/auth.ts",
 // };
 
 // const harness = new Harness(new GeminiLLM(), new ContextBuilder());

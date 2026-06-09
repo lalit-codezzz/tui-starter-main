@@ -1,3 +1,5 @@
+import fs from "fs/promises";
+
 import { Tool } from "./Tool";
 
 class ReadFileTool implements Tool {
@@ -7,8 +9,18 @@ class ReadFileTool implements Tool {
     this.name = "read_file";
     this.description = "This tool is used to read the file contents.";
   }
-  execute(args: Record<string, unknown>): Promise<string> {
-    return Promise.resolve("I am read-file tool!");
+  async execute(args: Record<string, unknown>): Promise<string> {
+    const { path } = args as { path: string };
+    try {
+      const fileContent = await fs.readFile(
+        `${process.cwd()}/${path}`,
+        "utf-8",
+      );
+      return fileContent;
+    } catch (error) {
+      console.log("READ_FILE_TOOL_ERROR: ", error);
+      throw new Error("File reading error! [from ReadFileTool]");
+    }
   }
 }
 

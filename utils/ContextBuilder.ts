@@ -1,43 +1,49 @@
 import { Message, Task } from "../types/types";
-import { rootDir } from "../cli";
 
+/***
+ * @returns Message[] - The array of initial messages
+ */
 export class ContextBuilder {
   async build(task: Task): Promise<Message[]> {
     const messages: Message[] = [];
+    const { type, target } = task;
 
-    //__________system_prompt__________
+    //__________system_message__________
     messages.push({
       role: "system",
-      content: "You are a Senior TypeScript Engineer",
+      content: `
+      You are a Senior TypeScript Engineer
+      
+      Available tools:
+      
+      read_file
+      Description: This tool is used to read the file contents.
+      Arguments:
+      {
+        "path": "string"
+      }
+
+      When you need a tool response only in JSON format like below:
+      {
+        "toolName": <name_of_the_tool>,
+        "arguments": {...}
+      }
+
+      - Do not explain why you need the tool.
+      - Do not include markdown.
+      - Return only JSON.
+      `,
     });
 
-    if (task.type === "explain") {
-      // const fileData = tools.readfileTool(task.target);
-      const fileData = "Fake data explain";
+    //__________user_message__________
+    if (type === "explain") {
       messages.push({
         role: "user",
         content: `
-            Explain the following file:
+              Task: ${type} the file located at:
 
-            Path: ${rootDir}/${task.target}
-
-            File Contents:
-            ${fileData}
-        `,
-      });
-    } else if (task.type === "bug") {
-      // const fileData = tools.readfileTool(task.target);
-      const fileData = "Fake data bug";
-      messages.push({
-        role: "user",
-        content: `
-            Read the following file and find the bug:
-
-            Path: ${task.target}
-
-            File Contents:
-            ${fileData}
-        `,
+              ${target}:
+          `,
       });
     }
 

@@ -12,5 +12,5 @@ export interface ToolCall {
 
 export interface ToolResult {
   toolName: string;
-  result: string;
+  result: unknown;
 }

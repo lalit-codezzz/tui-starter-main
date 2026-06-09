@@ -1,7 +1,8 @@
 import { GoogleGenAI } from "@google/genai";
 
-import { Message } from "../../types/types";
+import { AgentResponse, Message } from "../../types/types";
 import LLM from "../LLM";
+import { ToolCall } from "../../tools/Tool";
 
 class GeminiLLM implements LLM {
   private client: GoogleGenAI;
@@ -12,7 +13,7 @@ class GeminiLLM implements LLM {
     this.client = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
   }
 
-  async generate(messages: Message[]): Promise<string> {
+  async generate(messages: Message[]): Promise<AgentResponse> {
     const messageContentForGemini = messages.reduce(
       (acc: string, msg: Message) => {
         return (
@@ -30,10 +31,17 @@ class GeminiLLM implements LLM {
       model: "gemini-3.5-flash",
       contents: messageContentForGemini,
     });
-    console.log(response.text);
 
-    return response.text ?? "";
-    // return Promise.resolve("Gemini LLM");
+    try {
+      const toolCall: ToolCall = JSON.parse(response.text!);
+      return {
+        type: "tool_call",
+        toolCall,
+      };
+    } catch (error) {
+      console.log("Error from GeminiLLM: ", error);
+    }
+    return { type: "final", content: response.text ?? "" };
   }
 }
 

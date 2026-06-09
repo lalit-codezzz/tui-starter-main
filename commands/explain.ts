@@ -7,14 +7,14 @@ const explainCommand = new Command("explain")
   .argument("<filename>", "name of file")
   .action(async (targetFile, options) => {
     try {
-      const filePath = `${process.cwd()}/${targetFile}`;
       const task: Task = {
         type: "explain",
-        target: filePath,
+        target: targetFile,
       };
       const harness = createHarness();
 
-      await harness.run(task);
+      const response = await harness.run(task);
+      console.log(response);
     } catch (error) {
       console.log(error);
     }
