@@ -1,90 +1,297 @@
-As a Senior TypeScript Engineer, here is my review and explanation of the `auth.ts` file located in your starter repository.
+# CLI AI Agent (TypeScript)
+
+A minimal AI-powered CLI coding agent built in TypeScript.
+
+This project explores how modern coding agents such as Claude Code, Aider, Cursor, and OpenCode work internally by implementing the core building blocks from scratch:
+
+* LLM abstraction
+* Agent loop (Harness)
+* Tool calling
+* Context building
+* Tool registry
+* File system tools
+* Multi-provider support (planned)
+
+The goal is to understand the architecture of AI agents rather than simply wrapping an LLM API.
 
 ---
 
-### **Overview**
-Currently, this file is a **placeholder (stub)**. It does not contain any functional runtime logic or TypeScript-specific type safety features. It serves as a scaffolding point where your application's authentication logic (like session management, JWT verification, or OAuth integration) is intended to be implemented.
+## Features
+
+### Agent Runtime
+
+* Harness-based agent execution loop
+* Tool calling support
+* Conversation context management
+* Provider-agnostic LLM interface
+
+### Current Tools
+
+#### read_file
+
+Reads the contents of a file.
+
+Example:
+
+```bash
+explain src/auth.ts
+```
+
+The agent can:
+
+1. Request the `read_file` tool
+2. Receive file contents
+3. Generate an explanation
 
 ---
 
-### **Line-by-Line Code Breakdown**
+#### list_files
 
-```typescript
-function auth () {
-    /*
-    This file contains auth related code
-    */
-};
-```
-* **Declaration:** This declares a function named `auth`. 
-* **Type Inference:** Because there are no parameters and no `return` statement, TypeScript infers the signature of this function as `function auth(): void`.
-* **Semicolon anomaly:** There is a trailing semicolon `;` after the function closing curly brace `}`. While harmlessin JavaScript/TypeScript, it is syntactically redundant for standard function declarations (though required for function expressions).
+Lists files and directories within a given path.
 
-```typescript
-export default auth;
+Example:
+
+```bash
+explain .
 ```
-* **Export Strategy:** This uses an ES6 **default export**. This means when another file imports this function, they can rename it arbitrarily (e.g., `import customAuthName from './auth'`).
+
+The agent can inspect repository structure before deciding which files to read.
 
 ---
 
-### **Senior Engineer's Critique & Recommendations**
+## Architecture
 
-If we were preparing this file for production, here are the architectural changes and TypeScript best practices I would enforce:
-
-#### 1. Avoid Default Exports (Prefer Named Exports)
-In large-scale TypeScript projects, default exports can make refactoring more difficult because IDEs cannot automatically rename imports across the codebase as reliably as they do with named exports.
-* **Refactored:**
-  ```typescript
-  export function auth() { ... }
-  ```
-
-#### 2. Introduce Strong Typing
-Authentication functions should never implicitly return `any` or `void` without explicit intention. We need to definethe shape of our User, Session, or Auth State.
-
-#### 3. Example of how this file *should* evolve
-Assuming this is a typical frontend or full-stack starter kit, here is how we would refactor this stub into a type-safe, robust module:
-
-```typescript
-// Define strict types for our authentication state
-export interface UserSession {
-  id: string;
-  email: string;
-  token: string;
-  role: 'admin' | 'user';
-}
-
-export interface AuthState {
-  isAuthenticated: boolean;
-  user: UserSession | null;
-}
-
-/**
- * Validates the current session and returns the user state.
- * @returns {AuthState} The current authentication state.
- */
-export function getAuthStatus(): AuthState {
-  // TODO: Replace with actual storage/cookie/API check
-  const token = typeof window !== 'undefined' ? localStorage.getItem('token') : null;
-
-  if (!token) {
-    return {
-      isAuthenticated: false,
-      user: null,
-    };
-  }
-
-  // Example placeholder for decoded token data
-  return {
-    isAuthenticated: true,
-    user: {
-      id: "usr_123",
-      email: "user@example.com",
-      token: token,
-      role: "user",
-    },
-  };
-}
+```text
+CLI Command
+     │
+     ▼
+   Task
+     │
+     ▼
+ContextBuilder
+     │
+     ▼
+  Harness
+     │
+     ▼
+    LLM
+     │
+     ▼
+Agent Response
+     │
+ ┌───┴─────────┐
+ │             │
+ ▼             ▼
+Final      Tool Call
+Answer
+               │
+               ▼
+        Tool Registry
+               │
+               ▼
+            Tool
+               │
+               ▼
+          Tool Result
+               │
+               ▼
+            Harness
 ```
 
-### **Summary**
-The current file is just a **shell**. It is safe to delete, modify, or completely rewrite depending on the authentication library (such as NextAuth, Firebase, Auth0, or custom JWTs) you plan to integrate into this `tui-starter-main` project.
+---
+
+## Project Structure
+
+```text
+src/
+
+commands/
+├── explain.ts
+
+harness/
+├── Harness.ts
+
+llm/
+├── LLM.ts
+└── impls/
+    └── GeminiLLM.ts
+
+tools/
+├── Tool.ts
+├── ToolRegistry.ts
+├── ReadFileTool.ts
+└── ListFilesTool.ts
+
+types/
+└── types.ts
+
+utils/
+└── ContextBuilder.ts
+```
+
+---
+
+## Core Concepts
+
+### Harness
+
+The Harness is the heart of the agent.
+
+Responsibilities:
+
+* Execute the agent loop
+* Call the LLM
+* Execute tools
+* Feed tool results back to the model
+* Return final responses
+
+Pseudo-flow:
+
+```text
+Build Context
+      │
+      ▼
+
+Call LLM
+      │
+      ▼
+
+Tool Call?
+ ├── No → Return Answer
+ │
+ └── Yes
+        │
+        ▼
+   Execute Tool
+        │
+        ▼
+ Append Result
+        │
+        ▼
+     Call LLM Again
+```
+
+---
+
+### LLM Abstraction
+
+The agent depends on an interface instead of a specific provider.
+
+```text
+LLM
+ ├── GeminiLLM
+ ├── OpenRouterLLM (planned)
+ ├── OpenAILLM (planned)
+ └── ClaudeLLM (planned)
+```
+
+This allows the Harness to remain unchanged while swapping providers.
+
+---
+
+### Tools
+
+Tools allow the model to interact with the local environment.
+
+Current examples:
+
+* read_file
+* list_files
+
+Future examples:
+
+* write_file
+* grep
+* search_code
+* tree
+* execute_command
+
+---
+
+## Example Workflow
+
+User command:
+
+```bash
+bun cli.ts explain src/auth.ts
+```
+
+Agent flow:
+
+```text
+User Request
+      │
+      ▼
+Explain auth.ts
+      │
+      ▼
+LLM requests read_file
+      │
+      ▼
+Tool reads file
+      │
+      ▼
+Tool result returned
+      │
+      ▼
+LLM explains file
+      │
+      ▼
+Final Response
+```
+
+---
+
+## Future Roadmap
+
+### Phase 1 (Current)
+
+* [x] CLI commands
+* [x] Harness
+* [x] Gemini integration
+* [x] Tool registry
+* [x] read_file
+* [x] list_files
+
+### Phase 2
+
+* [ ] AgentState
+* [ ] Execution tracing
+* [ ] Iteration limits
+* [ ] Better tool schemas
+
+### Phase 3
+
+* [ ] search_code
+* [ ] tree tool
+* [ ] repository exploration
+
+### Phase 4
+
+* [ ] write_file
+* [ ] diff generation
+* [ ] file modification workflows
+
+### Phase 5
+
+* [ ] Multiple providers
+* [ ] OpenRouter
+* [ ] OpenAI
+* [ ] Anthropic
+* [ ] Local models via Ollama
+
+---
+
+## Motivation
+
+The purpose of this project is educational.
+
+Instead of relying on existing agent frameworks, this project rebuilds the core components from scratch to understand:
+
+* How coding agents reason
+* How tool calling works
+* How context is managed
+* How LLM providers are integrated
+* How modern AI developer tools are architected
+
+The end goal is to evolve this project into a lightweight CLI coding agent capable of exploring, understanding, and modifying codebases.

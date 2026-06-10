@@ -11,8 +11,7 @@ const explainCommand = new Command("explain")
         type: "explain",
         target: targetFile,
       };
-      const harness = createHarness();
-
+      const harness = createHarness({provider: "gemini"});
       const response = await harness.run(task);
       console.log(response);
     } catch (error) {

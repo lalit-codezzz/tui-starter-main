@@ -1,3 +1,4 @@
+import chalk from "chalk";
 import LLM from "../llm/LLM";
 import ToolRegistry from "../tools/ToolRegistry";
 import { Task } from "../types/types";
@@ -22,12 +23,25 @@ class Harness {
       }
 
       if (response.type === "tool_call") {
-        console.log(`Initializing tool call...`);
+        console.log(chalk.red(`\nInitializing tool call...`));
         const tool = this.toolRegistry.get(response.toolCall.toolName);
-        console.log("==================================================================");
-        console.log(`Tool name: ${response.toolCall.toolName}`);
-        console.log(`Tool description: ${tool.description}`);
-        console.log("==================================================================");
+        console.log(
+          chalk.red(
+            "==========================================================================",
+          ),
+        );
+        console.log(
+          chalk.red(`    Tool name: ${response.toolCall.toolName}    `),
+        );
+        console.log(
+          chalk.red(`    File : ${response.toolCall.arguments.path}    `),
+        );
+        console.log(chalk.red(`    Tool description: ${tool.description}    `));
+        console.log(
+          chalk.red(
+            "==========================================================================",
+          ),
+        );
         const toolResult = await tool.execute(response.toolCall.arguments);
         messages.push({
           role: "tool",

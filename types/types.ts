@@ -7,8 +7,13 @@ export interface Task {
   target: string;
 }
 
+export type User = "user";
+export type System = "system";
+export type Assistant = "assistant";
+export type Tool = "tool";
+
 export interface Message {
-  role: "system" | "user" | "assistant" | "tool";
+  role: User | System | Assistant | Tool;
   content: string;
 }
 

@@ -16,6 +16,7 @@ class ReadFileTool implements Tool {
         `${process.cwd()}/${path}`,
         "utf-8",
       );
+      console.log(fileContent);
       return fileContent;
     } catch (error) {
       console.log("READ_FILE_TOOL_ERROR: ", error);

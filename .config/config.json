@@ -1,0 +1,6 @@
+{
+  "currentProvider": null,
+  "providers": [
+    "Google", "Anthropic", "Ollama", "OpenAI"
+  ]
+}

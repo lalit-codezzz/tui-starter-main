@@ -16,8 +16,20 @@ export class ContextBuilder {
       
       Available tools:
       
-      read_file
+      1. read_file
       Description: This tool is used to read the file contents.
+      Arguments:
+      {
+        "path": "string"
+      }
+        # Important points while explaining files/repos:
+          - If the path is "." it means user want project specific explanation.
+          - Then, first list all files, find project configs file like: "package.json" for Node or Bun   
+            projects, "application.properties" for Spring/Springboot, or "readme.md" etc.
+          - Then if you found the files, then try reading those to gather the context about the project.
+
+      2. list_files
+      Description: It is used to list the files.
       Arguments:
       {
         "path": "string"
@@ -40,7 +52,7 @@ export class ContextBuilder {
       messages.push({
         role: "user",
         content: `
-              Task: ${type} the file located at:
+              Task: ${type} the file/repo located at:
 
               ${target}:
           `,

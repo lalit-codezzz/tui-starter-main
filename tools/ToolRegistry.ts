@@ -1,3 +1,4 @@
+import ListFilesTool from "./ListFilesTool";
 import ReadFileTool from "./ReadFileTool";
 
 class ToolRegistry {
@@ -5,6 +6,7 @@ class ToolRegistry {
 
   constructor() {
     this.tools.set("read_file", new ReadFileTool());
+    this.tools.set("list_files", new ListFilesTool());
   }
 
   get(toolName: string) {
