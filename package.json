@@ -1,14 +1,22 @@
 {
+  "type": "module",
+  "name": "castro",
   "dependencies": {
     "@google/genai": "^2.8.0",
     "@types/commander": "^2.12.5",
+    "@types/figlet": "^1.7.0",
     "@types/node": "^25.9.2",
+    "@types/react": "^19.2.17",
+    "castro": "link:castro",
     "chalk": "^5.6.2",
     "dotenv": "^17.4.2",
+    "figlet": "^1.11.0",
     "fs": "^0.0.1-security",
-    "openai": "^6.42.0"
+    "ink": "^7.0.6",
+    "openai": "^6.42.0",
+    "react": "^19.2.7"
   },
-  "scripts": {
-    "castro": "bun cli.ts"
+  "bin": {
+    "castro": "./cli.ts"
   }
 }

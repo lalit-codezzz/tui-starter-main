@@ -4,9 +4,8 @@ import { AgentResponse, Message } from "../../types/types";
 import LLM from "../LLM";
 import { ToolCall } from "../../tools/Tool";
 import chalk from "chalk";
-
-const GOOGLE_CLOUD_PROJECT = "project-e235b4a1-48ab-4eb9-9bd";
-const GOOGLE_CLOUD_LOCATION = "global";
+import { render } from "ink";
+import Connecting from "../../ui/components/Connecting";
 
 class GeminiLLM implements LLM {
   private client: GoogleGenAI;
@@ -35,34 +34,29 @@ class GeminiLLM implements LLM {
       ``,
     );
 
-    console.log(
-      chalk.bgYellow(
-        "\n=============================",
-      ),
-    );
-    console.log(chalk.bgYellow(chalk.bold(chalk.italic("Connecting to Gemini model..."))));
-    console.log(
-      chalk.bgYellow(
-        "=============================",
-      ),
-    );
+    console.log(chalk.green.bold("\n============================="));
+    console.log(chalk.green.bold.italic("Connecting to Gemini model..."));
+    console.log(chalk.green.bold("============================="));
 
     let response;
+    let parsed;
     try {
       response = await this.client.models.generateContent({
         model: "gemini-3.1-flash-lite",
         contents: messageContentForGemini,
       });
-
-      const toolCall: ToolCall = JSON.parse(response.text!);
-      return {
-        type: "tool_call",
-        toolCall,
-      };
+      parsed = JSON.parse(response.text!);
+      if (!parsed.fr) {
+        const toolCall: ToolCall = parsed;
+        return {
+          type: "tool_call",
+          toolCall,
+        };
+      }
     } catch (error) {
-      // console.log("Error from GeminiLLM: ", error);
+      console.log("Error from GeminiLLM: ", error);
     }
-    return { type: "final", content: response?.text ?? "" };
+    return { type: "final", content: parsed.c ?? "" };
   }
 }
 

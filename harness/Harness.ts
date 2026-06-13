@@ -4,6 +4,8 @@ import ToolRegistry from "../tools/ToolRegistry";
 import { Task } from "../types/types";
 import { ContextBuilder } from "../utils/ContextBuilder";
 import delayer from "../utils/delayer";
+import Label from "../ui/components/Label";
+import { render } from "ink";
 
 class Harness {
   constructor(
@@ -12,7 +14,7 @@ class Harness {
     private toolRegistry: ToolRegistry,
   ) {}
 
-  async run(task: Task): Promise<string> {
+  async run(task: Task): Promise<unknown> {
     const messages = await this.contextBuilder.build(task);
 
     // Agent Loop - Heart of the Agent
@@ -24,35 +26,38 @@ class Harness {
       }
 
       if (response.type === "tool_call") {
-        const msg1 = await delayer("Agent wants to do a tool call...", 1000);
-        console.log(chalk.bgYellow(msg1));
+        // console.log(response);
+        const msg1 = await delayer("\nAgent wants to do a tool call...", 1000);
+        console.log(chalk.green.bold(msg1));
+
+        // render(Label({ text: msg1 }));
 
         const msg2 = await delayer("Details about tool:", 1000);
-        console.log(chalk.bgYellow(msg2));
+        console.log(chalk.green.bold(msg2));
 
         const msg3 = await delayer(
           `Tool Name: ${response.toolCall.toolName}`,
           1000,
         );
-        console.log(chalk.bgYellow(msg3));
+        console.log(chalk.green.bold(msg3));
 
-        const input = prompt(chalk.bgYellow("Do you agree? <y/n>"));
+        const input = prompt(chalk.green.bold("Do you agree? < y / n >"));
 
         if (input !== "y") {
           console.log(
             chalk.bgRedBright.bold.underline(
-              "\nOperation interrupted by User!",
+              "\n Operation interrupted by User! ",
             ),
           );
           return "";
         }
 
         const msg4 = await delayer(`\nInitializing tool call...`, 1000);
-        console.log(chalk.red(msg4));
+        console.log(chalk.magenta.bold(msg4));
         const tool = this.toolRegistry.get(response.toolCall.toolName);
 
-        const msg5 = await delayer(`
-==========================================================================
+        const msg5 = await delayer(
+`==========================================================================
     Tool name: ${response.toolCall.toolName}
     File : ${response.toolCall.arguments.path}
     Tool description: ${tool.description}
@@ -60,10 +65,12 @@ class Harness {
           1500,
         );
 
-        console.log(chalk.redBright(msg5));
+        console.log(chalk.magenta.bold(msg5));
+
+        const fakeDelay = await delayer("", 1000);
 
         const toolResult = await tool.execute(response.toolCall.arguments);
-        console.log(toolResult);
+        // console.log(toolResult);
         messages.push({
           role: "tool",
           content: `

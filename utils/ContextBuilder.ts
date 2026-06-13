@@ -35,15 +35,30 @@ export class ContextBuilder {
         "path": "string"
       }
 
-      When you need a tool response only in JSON format like below:
+      When you need a tool, response in JSON format like below:
       {
         "toolName": <name_of_the_tool>,
         "arguments": {...}
       }
 
+      When task is done, then return response format like below:
+      {
+        fr: true,
+        c: [
+            {
+              key: <heading>
+              value: [
+                <content under this heading>,
+                <...>,
+                <...>,
+                .
+                .
+              ]
+            }
+          ]
+      }
       - Do not explain why you need the tool.
       - Do not include markdown.
-      - Return only JSON.
       `,
     });
 
@@ -54,6 +69,16 @@ export class ContextBuilder {
         content: `
               Task: ${type} the file/repo located at:
 
+              ${target}:
+          `,
+      });
+    } else if (type === "chat") {
+      messages.push({
+        role: "user",
+        content: `
+              Task: ${type}:
+
+              Implement below operation given by user:
               ${target}:
           `,
       });
