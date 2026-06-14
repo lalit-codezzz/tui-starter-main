@@ -1,3 +1,4 @@
+import { toolsDescription } from "../constants/toolsDescription";
 import { Message, Task } from "../types/types";
 
 /***
@@ -13,33 +14,8 @@ export class ContextBuilder {
       role: "system",
       content: `
       You are a Senior TypeScript Engineer
-      
-      Available tools:
-      
-      1. read_file
-      Description: This tool is used to read the file contents.
-      Arguments:
-      {
-        "path": "string"
-      }
-        # Important points while explaining files/repos:
-          - If the path is "." it means user want project specific explanation.
-          - Then, first list all files, find project configs file like: "package.json" for Node or Bun   
-            projects, "application.properties" for Spring/Springboot, or "readme.md" etc.
-          - Then if you found the files, then try reading those to gather the context about the project.
 
-      2. list_files
-      Description: It is used to list the files.
-      Arguments:
-      {
-        "path": "string"
-      }
-
-      When you need a tool, response in JSON format like below:
-      {
-        "toolName": <name_of_the_tool>,
-        "arguments": {...}
-      }
+      ${toolsDescription}
 
       When task is done, then return response format like below:
       {
