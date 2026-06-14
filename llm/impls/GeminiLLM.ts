@@ -45,8 +45,9 @@ class GeminiLLM implements LLM {
         model: "gemini-3.1-flash-lite",
         contents: messageContentForGemini,
       });
+      console.log(response.text);
       parsed = JSON.parse(response.text!);
-      if (!parsed.fr) {
+      if (!parsed.final) {
         const toolCall: ToolCall = parsed;
         return {
           type: "tool_call",
@@ -56,7 +57,8 @@ class GeminiLLM implements LLM {
     } catch (error) {
       console.log("Error from GeminiLLM: ", error);
     }
-    return { type: "final", content: parsed.c ?? "" };
+    console.log(parsed);
+    return { type: "final", content: parsed.sections ?? "" };
   }
 }
 

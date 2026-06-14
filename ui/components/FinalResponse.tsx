@@ -1,10 +1,4 @@
-import React from 'react';
 import { Box, Text } from 'ink';
-
-interface Section {
-    key: string;
-    value: string[];
-}
 
 interface Props {
     data: unknown;
@@ -26,16 +20,16 @@ export default function FinalResponse({ data }: Props) {
             {Array.isArray(data) && data?.map((section, i) => {
                 const color = COLORS[i % COLORS.length];
                 return (
-                    <Box key={section.key} flexDirection="column" gap={0} marginTop={1}>
+                    <Box key={section.heading} flexDirection="column" gap={0} marginTop={1}>
 
                         {/* Section title with left accent bar */}
                         <Box gap={1}>
                             <Text color={color} bold>{'┃'}</Text>
-                            <Text color={color} bold>{section.key}</Text>
+                            <Text color={color} bold>{section.heading}</Text>
                         </Box>
 
                         {/* Values */}
-                        {section.value.map((line: string, j: number) => (
+                        {section.points.map((line: string, j: number) => (
                             <Box key={j} gap={1} paddingLeft={2}>
                                 <Text color={color}>{'›'}</Text>
                                 <Text color="white">{line}</Text>

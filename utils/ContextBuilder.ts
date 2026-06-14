@@ -1,3 +1,5 @@
+import { chatSystemPrompt } from "../constants/system-prompts/chatSystemPrompt";
+import { explainSystemPrompt } from "../constants/system-prompts/explainSystemPrompt";
 import { toolsDescription } from "../constants/toolsDescription";
 import { Message, Task } from "../types/types";
 
@@ -9,53 +11,30 @@ export class ContextBuilder {
     const messages: Message[] = [];
     const { type, target } = task;
 
-    //__________system_message__________
-    messages.push({
-      role: "system",
-      content: `
-      You are a Senior TypeScript Engineer
-
-      ${toolsDescription}
-
-      When task is done, then return response format like below:
-      {
-        fr: true,
-        c: [
-            {
-              key: <heading>
-              value: [
-                <content under this heading>,
-                <...>,
-                <...>,
-                .
-                .
-              ]
-            }
-          ]
-      }
-      - Do not explain why you need the tool.
-      - Do not include markdown.
-      `,
-    });
-
     //__________user_message__________
     if (type === "explain") {
+      //__________system_message__________
+      messages.push(explainSystemPrompt);
+
+      //__________user_message__________
       messages.push({
         role: "user",
         content: `
-              Task: ${type} the file/repo located at:
+              Task - Explain the file/project:
 
-              ${target}:
+              User asked file/project - ${target}
+
+              # Ignore filename case-sensitiveness
           `,
       });
     } else if (type === "chat") {
+      messages.push(chatSystemPrompt);
       messages.push({
         role: "user",
         content: `
-              Task: ${type}:
+              Type of task - ${type}:
 
-              Implement below operation given by user:
-              ${target}:
+              Prompt by user - ${target}
           `,
       });
     }

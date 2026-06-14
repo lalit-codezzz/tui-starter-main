@@ -4,8 +4,6 @@ import ToolRegistry from "../tools/ToolRegistry";
 import { Task } from "../types/types";
 import { ContextBuilder } from "../utils/ContextBuilder";
 import delayer from "../utils/delayer";
-import Label from "../ui/components/Label";
-import { render } from "ink";
 
 class Harness {
   constructor(
@@ -80,6 +78,7 @@ class Harness {
             ${toolResult}
           `,
         });
+        console.log(messages);
         continue;
       }
     }
